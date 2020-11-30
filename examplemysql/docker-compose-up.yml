@@ -1,0 +1,101 @@
+version: "3"
+services:
+  mysql-msater:
+    image: mysql:5.7.22
+    container_name: mysql-master
+    hostname: mysql-master
+    ports:
+      - 3326:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/usr/share/zoneinfo/Asia/Shanghai
+      - ./mysql/master3326/logs:/var/log/mysql
+      - ./mysql/master3326/data:/var/lib/mysql
+    command:
+      --server_id=300
+      --log-bin=mysql-master-bin
+      --sync_binlog=1
+
+      --binlog-ignore-db=mysql
+      --binlog_format=mixed
+      --expire_logs_days=7
+
+      --default-authentication-plugin=mysql_native_password
+
+      --character-set-server=utf8mb4
+
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+  mysql-slave-3327:
+    image: mysql:5.7.22
+    container_name: mysql-slave-3327
+    hostname: mysql-slave-3327
+    ports:
+      - 3327:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - ./mysql/slave-3327/logs:/var/log/mysql
+      - ./mysql/slave-3327/data:/var/lib/mysql
+      - /usr/share/zoneinfo/Asia/Shanghai:/usr/share/zoneinfo/Asia/Shanghai
+    command:
+      --server_id=310
+      --read_only=1
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    links:
+      - mysql-msater
+  mysql-slave-3328:
+    image: mysql:5.7.22
+    container_name: mysql-slave-3328
+    hostname: mysql-slave-3328
+    ports:
+      - 3328:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - ./mysql/slave-3328/logs:/var/log/mysql
+      - ./mysql/slave-3328/data:/var/lib/mysql
+      - /usr/share/zoneinfo/Asia/Shanghai:/usr/share/zoneinfo/Asia/Shanghai
+    command:
+      --server_id=320
+      --read_only=1
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    links:
+      - mysql-msater
+  mysql-slave-back:
+    image: mysql:5.7.22
+    container_name: mysql-slave-back
+    hostname: mysql-slave-back
+    ports:
+      - 3340:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - /opt/slave-back-3340/logs:/var/log/mysql
+      - /opt/slave-back-3340/data:/var/lib/mysql
+      - /usr/share/zoneinfo/Asia/Shanghai:/usr/share/zoneinfo/Asia/Shanghai
+    command:
+      --server_id=330
+      --log-bin=slave-back-bin
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+    links:
+      - mysql-msater

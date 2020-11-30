@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true">
+    <!-- 日志记录的上下文的名字-->
+    <contextName>spring-boot-starter-log</contextName>
+    <property name="LOG_BASE_PATH" value="/home/tourapp/logs" />
+    <!-- 日志输出格式：%d表示日期时间，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %logger{50} 表示logger名字最长50个字符，否则按照句点分割。
+     %msg：日志消息，%n是换行符 -->
+    <property name="STDOUT_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+
+    <!--注册转换器，颜⾊转化器-->
+    <conversionRule conversionWord="clr"
+                    converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <!-- 控制台输出-->
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+        <!-- 编码格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${STDOUT_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+    </appender>
+    <!-- 滚动输出  业务日志-->
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FILE-INFO">
+        <!--常规日志文件-->
+<!--        <file>${LOG_BASE_PATH}/log-info.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 归档日志文件-->
+            <fileNamePattern>${LOG_BASE_PATH}/info/log-info.%d{yyyy-MM-dd}(%i).log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>6</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf-8</charset>
+            <pattern>${STDOUT_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!--错误日志-->
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FILE-ERROR">
+        <!--常规日志文件-->
+    <!--        <file>${LOG_BASE_PATH}/log-error.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 归档日志文件-->
+            <fileNamePattern>${LOG_BASE_PATH}/error/log-error.%d{yyyy-MM-dd}(%i).log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>6</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf-8</charset>
+            <pattern>${STDOUT_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--异步输出，异步的log⽚段必须在同步段后⾯，否则不起作⽤ -->
+    <appender name="FILE-INFO-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失⽇志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的⽇志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的appender,最多只能添加⼀个 -->
+        <appender-ref ref="FILE-INFO"/>
+    </appender>
+
+    <appender name="FILE-ERROR-ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失⽇志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的⽇志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的appender,最多只能添加⼀个 -->
+        <appender-ref ref="FILE-ERROR"/>
+    </appender>
+    <!--根⽇志-->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE-INFO-ASYNC"/>
+        <appender-ref ref="FILE-ERROR-ASYNC"/>
+    </root>
+</configuration>

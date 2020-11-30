@@ -1,0 +1,88 @@
+spring:
+  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #  监控配置
+      web-stat-filter:
+        # 开启后台性能检测
+        enabled: true
+        # 访问接口就是对数据库操作
+        url-pattern: /*
+#        前后端不分离的，排除静态资源请求
+#        exclusions: "*.js"
+#        开始同级session的数据
+#        session-stat-enable: true
+#        session的最大统计数 超过1000的不统计
+#        session-stat-max-count: 1000
+#     类似于 DruidConfig类 ，配置监控显示界面的东西
+      #后台监控界面启用
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        #注意不要设置为true
+        reset-enable: false
+        login-username: admin
+        login-password: 12345678
+#        默认所有人都可访问，设置访问的白名单只有白名单可访问
+#        allow: 127.0.0.1
+    #多数据源配置
+    dynamic:
+    #  全局druid配置
+      druid:
+#        username: root
+#        password: root
+#        url: jdbc:mysql://119.23.190.71:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+        initial-size: 5
+        max-active: 20
+        min-idle: 3
+        # 配置获取连接等待超时的时间 单位毫秒
+        max-wait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        time-between-eviction-runs-millis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        min-evictable-idle-time-millis: 300000
+        validation-query: select
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        # 打开PSCache，并且指定每个连接上PSCache的大小
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 20
+        #      配置监控统计拦截器 日志配置  防火墙
+        #      stat监控数据库性能
+        #      wall  用于防火墙
+        #      日志 slf4j logback
+        #      log4j
+        #      log4j2
+        # 配置多个英文逗号分隔
+        filters: wall,stat, slf4j
+      datasource:
+        master:
+          url: jdbc:mysql://47.113.204.105:3326/db_tour
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+        #读
+        salve-read-3327:
+          url: jdbc:mysql://47.113.204.105:3327/db_tour
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+        #读
+        salve-read-3328:
+          url: jdbc:mysql://47.113.204.105:3328/db_tour
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+        #备份
+        salve-back:
+          url: jdbc:mysql://47.113.204.105:3328/db_tour
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+
+
+
+
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clever.chen.app.mapper.ThemeMapper">
+  <resultMap id="BaseResultMap" type="com.clever.chen.app.entity.Theme">
+    <!--@mbg.generated-->
+    <!--@Table theme-->
+    <id column="theme_id" jdbcType="BIGINT" property="themeId" />
+    <result column="theme_name" jdbcType="VARCHAR" property="themeName" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    theme_id, theme_name, is_del
+  </sql>
+</mapper>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clever.chen.app.mapper.ProductMapper">
+    <resultMap id="BaseResultMap" type="com.clever.chen.app.entity.Product">
+        <!--@mbg.generated-->
+        <!--@Table product-->
+        <id column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="head" jdbcType="VARCHAR" property="head"/>
+        <result column="subhead" jdbcType="VARCHAR" property="subhead"/>
+        <result column="start" jdbcType="VARCHAR" property="start"/>
+        <result column="destination" jdbcType="VARCHAR" property="destination"/>
+        <result column="base" jdbcType="VARCHAR" property="base"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="manager_id" jdbcType="BIGINT" property="managerId"/>
+        <result column="manager_name" jdbcType="VARCHAR" property="managerName"/>
+        <result column="click" jdbcType="BIGINT" property="click"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="type_id" jdbcType="INTEGER" property="typeId"/>
+        <result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+        <result column="order_mark" jdbcType="INTEGER" property="orderMark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="expiration_time" jdbcType="TIMESTAMP" property="expirationTime"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        product_id, head, subhead, `start`, destination, base, price, manager_id, manager_name,
+        click, `status`, type_id, type_name, order_mark, create_time, update_time, expiration_time,
+        is_del, version
+    </sql>
+
+    <select id="selectTheList" resultMap="BaseResultMap">
+        SELECT product.product_id,
+               product.head,
+               product.subhead,
+               product.start,
+               product.destination,
+               product.base,
+               product.price,
+               product.manager_id,
+               product.manager_name,
+               product.click,
+               product.status,
+               product.type_id,
+               product.type_name,
+               product.order_mark,
+               product.create_time,
+               product.update_time,
+               product.expiration_time,
+               product.is_del,
+               product.version
+                FROM product
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            LEFT JOIN theme_product_relation
+                    ON product.product_id = theme_product_relation.product_id
+        </if>
+        WHERE product.is_del = 0
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.is_del = 0
+        </if>
+        <if test="condition.status != null">
+            AND product.status = #{condition.status}
+        </if>
+        <if test="condition.typeId != null">
+            AND product.type_id = #{condition.typeId}
+        </if>
+        <if test="condition.start != null">
+            AND product.start = #{condition.start}
+        </if>
+        <if test="condition.destination != null">
+            AND product.destination = #{condition.destination}
+        </if>
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.theme_id IN
+            <foreach collection="condition.themes" item="theme" separator="," close=")" open="(">
+                #{theme}
+            </foreach>
+        </if>
+        <if test="condition.keyStr != null and condition.keyStr != ''">
+            AND (
+                    product.manager_name LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.start LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.destination LIKE '%#{condition.keyStr}%'
+
+            <if test="condition.keyStr.matches('^[0-9]*$') != false">
+                OR product.product_id = #{condition.keyStr}
+            </if>
+            )
+        </if>
+        LIMIT #{offset},#{size}
+    </select>
+
+    <select id="selectTotalCountByCondition" resultType="int">
+        SELECT count(product.product_id) 'total'
+        FROM product
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            LEFT JOIN theme_product_relation
+            ON product.product_id = theme_product_relation.product_id
+        </if>
+        WHERE product.is_del = 0
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.is_del = 0
+        </if>
+        <if test="condition.typeId != null">
+            AND product.type_id = #{condition.typeId}
+        </if>
+        <if test="condition.start != null">
+            AND product.start = #{condition.start}
+        </if>
+        <if test="condition.destination != null">
+            AND product.destination = #{condition.destination}
+        </if>
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.theme_id IN
+            <foreach collection="condition.themes" item="theme" separator="," close=")" open="(">
+                #{theme}
+            </foreach>
+        </if>
+        <if test="condition.keyStr != null and condition.keyStr != ''">
+            AND (
+                    product.manager_name LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.start LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.destination LIKE '%#{condition.keyStr}%'
+
+            <if test="condition.keyStr.matches('^[0-9]*$') != false">
+                OR product.product_id = #{condition.keyStr}
+            </if>
+            )
+        </if>
+    </select>
+
+    <select id="selectCountByCondition" resultType="int">
+        SELECT count(product.product_id)
+        FROM product
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            LEFT JOIN theme_product_relation
+            ON product.product_id = theme_product_relation.product_id
+        </if>
+        WHERE product.is_del = 0
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.is_del = 0
+        </if>
+        <if test="condition.status != null">
+            AND product.status = #{condition.status}
+        </if>
+        <if test="condition.typeId != null">
+            AND product.type_id = #{condition.typeId}
+        </if>
+        <if test="condition.start != null">
+            AND product.start = #{condition.start}
+        </if>
+        <if test="condition.destination != null">
+            AND product.destination = #{condition.destination}
+        </if>
+        <if test="condition.themes != null and condition.themes.size() != 0">
+            AND theme_product_relation.theme_id IN
+            <foreach collection="condition.themes" item="theme" separator="," close=")" open="(">
+                #{theme}
+            </foreach>
+        </if>
+        <if test="condition.keyStr != null and condition.keyStr != ''">
+            AND (
+                    product.manager_name LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.start LIKE '%#{condition.keyStr}%'
+                    OR
+                    product.destination LIKE '%#{condition.keyStr}%'
+
+            <if test="condition.keyStr.matches('^[0-9]*$') != false">
+                OR product.product_id = #{condition.keyStr}
+            </if>
+            )
+        </if>
+    </select>
+</mapper>
